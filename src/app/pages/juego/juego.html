@@ -1,0 +1,171 @@
+<!-- juego.html -->
+<header class="top">
+  <h1>☀️ Crea tu clima espacial</h1>
+  <p class="subtitle">
+    <strong>Mantén presionado el Sol</strong> para cargar energía Kp lentamente.
+    <br/>Suelta para liberar el plasma hacia la Tierra.
+  </p>
+</header>
+
+<!-- HUD: Kp (izquierda) y Niveles (derecha) -->
+<section class="hud">
+  <div class="kp">
+    <div class="kp__label">
+      Energía Kp: <span #kpValue>{{ Math.round(kp) }}</span> / 9
+    </div>
+    <div class="kp__bar" aria-label="Barra de energía Kp">
+      <span #kpFill [style.width]="(kp/9)*100 + '%'"></span>
+      <ul class="kp__ticks" aria-hidden="true">
+        <li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li>
+      </ul>
+    </div>
+    <div #kpStatus [class]="kpStatusClass" [innerHTML]="kpStatusText"></div>
+    <div class="kp__controls">
+      <button #btnReset (click)="onReset()" class="chip">Reiniciar</button>
+      <button #btnSound (click)="onToggleSound()" class="chip" [class.on]="soundOn" 
+              [attr.aria-pressed]="soundOn">
+        {{ soundOn ? '🔊 Sonido: ON' : '🔇 Sonido: OFF' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <strong>Niveles</strong>
+    <ul>
+      <li><span class="dot dot--low"></span> Kp 0–4: Viento solar</li>
+      <li><span class="dot dot--mid"></span> Kp 5–7: Tormenta solar</li>
+      <li><span class="dot dot--high"></span> Kp 8–9: "Huracán" solar</li>
+    </ul>
+    <small class="muted">Carga lenta con una sola pulsación prolongada.</small>
+  </div>
+</section>
+
+<main #stage class="stage" aria-label="Escenario del sistema Sol-Tierra">
+  <!-- Capa de partículas -->
+  <div #plasmaLayer class="plasma-layer" aria-hidden="true"></div>
+
+  <!-- Sol -->
+  <button #sun class="sun" 
+          (pointerdown)="onSunPointerDown($event)"
+          (pointerup)="onSunPointerUp($event)"
+          (pointerleave)="onSunPointerLeave($event)"
+          aria-label="Campo magnético del Sol (mantén presionado para cargar; suelta para liberar)" 
+          title="Mantén presionado para cargar; suelta para liberar">
+    <svg viewBox="0 0 200 200" role="img" aria-label="Sol">
+      <!-- SVG del Sol -->
+      <defs>
+        <radialGradient id="sunCore" cx="50%" cy="48%" r="58%">
+          <stop offset="0%"  stop-color="#fffbe6"/>
+          <stop offset="35%" stop-color="#ffd166"/>
+          <stop offset="70%" stop-color="#ff9800"/>
+          <stop offset="100%" stop-color="#ff5200"/>
+        </radialGradient>
+        <radialGradient id="sunHalo" cx="50%" cy="50%" r="85%">
+          <stop offset="0%"   stop-color="#ffc84a" stop-opacity=".55"/>
+          <stop offset="55%"  stop-color="#ff9b2f" stop-opacity=".28"/>
+          <stop offset="100%" stop-color="#ff7b00" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="sunGranulate" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="3" seed="6" result="noise">
+            <animate attributeName="seed" values="3;7;3" dur="12s" repeatCount="indefinite"/>
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="2.2"/>
+        </filter>
+      </defs>
+      <circle class="corona" cx="100" cy="100" r="88" fill="url(#sunHalo)"/>
+      <g filter="url(#sunGranulate)">
+        <circle cx="100" cy="100" r="60" fill="url(#sunCore)"/>
+      </g>
+      <g class="prominences" filter="url(#softGlow)" fill="none" stroke="#ffae2b" stroke-linecap="round" stroke-width="3" opacity=".85">
+        <path d="M40,100 C42,76 64,58 88,52" />
+        <path d="M100,12 C122,20 144,36 154,52" />
+        <path d="M168,98 C160,118 138,132 118,142" />
+        <path d="M54,138 C58,148 72,156 88,160" />
+      </g>
+      <circle class="halo" cx="100" cy="100" r="90" fill="none" />
+    </svg>
+    <span class="hint">mantén presionado</span>
+  </button>
+
+  <!-- Tierra -->
+  <div class="earth-wrap">
+    <svg class="earth" viewBox="0 0 160 160" role="img" aria-label="Tierra">
+      <!-- SVG de la Tierra -->
+      <defs>
+        <radialGradient id="earthOcean" cx="45%" cy="40%" r="65%">
+          <stop offset="0%"   stop-color="#a9dbff"/>
+          <stop offset="65%"  stop-color="#1c7ed6"/>
+          <stop offset="100%" stop-color="#0b4ea5"/>
+        </radialGradient>
+        <linearGradient id="earthLand" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#d8f8c0"/>
+          <stop offset="55%"  stop-color="#69b578"/>
+          <stop offset="100%" stop-color="#3a7f4d"/>
+        </linearGradient>
+        <radialGradient id="earthTerm" cx="30%" cy="30%" r="80%">
+          <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity=".35"/>
+        </radialGradient>
+        <radialGradient id="earthGlare" cx="35%" cy="28%" r="35%">
+          <stop offset="0%"   stop-color="#ffffff" stop-opacity=".25"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="cloudBlur">
+          <feGaussianBlur stdDeviation="1.4"/>
+        </filter>
+      </defs>
+      <circle cx="80" cy="80" r="60" fill="url(#earthOcean)"/>
+      <g class="land" fill="url(#earthLand)" opacity=".95">
+        <path d="M60,56 C52,50 42,66 46,86 C50,104 60,118 70,130 C78,122 83,108 78,96 C73,84 67,72 60,56 Z"/>
+        <path d="M90,52 C106,48 124,58 132,74 C127,88 116,95 110,104 C100,110 94,100 94,90 C92,80 90,68 90,52 Z"/>
+        <path d="M104,94 C110,100 112,112 108,122 C102,130 95,128 90,118 C90,108 96,100 104,94 Z"/>
+        <path d="M118,118 C128,116 135,124 132,132 C128,138 120,140 114,136 C112,130 114,124 118,118 Z"/>
+      </g>
+      <g class="clouds" filter="url(#cloudBlur)" fill="#fff" opacity=".28">
+        <ellipse cx="65" cy="55" rx="16" ry="6"/>
+        <ellipse cx="95" cy="70" rx="22" ry="8"/>
+        <ellipse cx="80" cy="92" rx="26" ry="9"/>
+        <ellipse cx="110" cy="88" rx="18" ry="6"/>
+        <ellipse cx="60" cy="105" rx="14" ry="5"/>
+        <ellipse cx="100" cy="48" rx="12" ry="4.5"/>
+      </g>
+      <circle cx="80" cy="80" r="60" fill="url(#earthTerm)"/>
+      <circle cx="80" cy="80" r="60" fill="url(#earthGlare)"/>
+      <ellipse cx="80" cy="80" rx="78" ry="28" fill="none" class="belt"/>
+      <ellipse cx="80" cy="80" rx="68" ry="22" fill="none" class="belt belt--inner"/>
+    </svg>
+    <div #aurora class="aurora" aria-hidden="true"></div>
+  </div>
+</main>
+
+<section class="events">
+  <div #alertAurora class="banner" [class.hidden]="!showAuroraBanner" role="alert">
+    ⚠️ Advertencia: ¡Posibles <strong>auroras</strong> visibles a latitudes inusuales! Observa el cielo nocturno con precaución.
+  </div>
+
+  <div class="cards">
+    <article class="card">
+      <h3>Resultado del evento</h3>
+      <p #eventTypeEl [innerHTML]="eventType"></p>
+    </article>
+
+    <article class="card">
+      <h3>Mensaje</h3>
+      <p #eventMsgEl>{{ eventMsg }}</p>
+    </article>
+
+    <article class="card">
+      <h3>Consecuencias en la Tierra</h3>
+      <ul class="effects">
+        <li *ngFor="let effect of effectsList">{{ effect }}</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="note">Simulación educativa y visual.</span>
+</footer>

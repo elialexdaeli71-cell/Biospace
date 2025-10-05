@@ -1,0 +1,156 @@
+/* ========== Página de Mapa con fondo Cloudinary + auroras ========== */
+.mapa-page{
+  --bg-url: url('https://res.cloudinary.com/ds757fmhk/image/upload/v1759585038/unnamed_fe67xe.png');
+  --accent:#e94560; --accent-2:#ff6b8b;
+  --glass: rgba(20, 26, 46, .55);
+  --text:#fff; --muted:#c9d4e6;
+  --shadow: 0 26px 60px rgba(0,0,0,.55);
+  --radius-xl:28px; --radius-lg:18px;
+
+  color: var(--text);
+  padding: clamp(28px, 4vw, 56px) 16px;
+  display: grid; gap: 18px;
+  position: relative; isolation: isolate;
+
+  /* Fondo con tu imagen + capa oscura */
+  &::before{
+    content:""; position: fixed; inset:0; z-index:-3;
+    background:
+      radial-gradient(1200px 800px at 10% -10%, rgba(255,255,255,.08), transparent 60%),
+      linear-gradient(rgba(10,12,24,.6), rgba(10,12,24,.8)),
+      var(--bg-url) center/cover no-repeat fixed;
+    filter: saturate(1.05) contrast(1.05);
+  }
+  /* Auroras animadas */
+  &::after{
+    content:""; position: fixed; inset:-20% -10%; z-index:-2;
+    background:
+      radial-gradient(600px 300px at 25% 25%, rgba(233,69,96,.18), transparent 60%),
+      radial-gradient(600px 320px at 80% 60%, rgba(86,255,198,.14), transparent 60%),
+      radial-gradient(700px 380px at 50% 80%, rgba(0,194,255,.16), transparent 70%);
+    mix-blend-mode: screen; animation: aurora 18s ease-in-out infinite alternate;
+  }
+}
+@keyframes aurora{
+  0% { transform: translate3d(0,0,0) scale(1); filter: blur(0px); }
+  100%{ transform: translate3d(0,-2%,0) scale(1.03); filter: blur(1px); }
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  background: rgba(26, 32, 58, .65);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+  text-align: center;
+  padding: clamp(22px, 3vw, 34px);
+  backdrop-filter: blur(6px);
+  position: relative;
+
+  &::before{
+    content:""; position:absolute; inset:0 0 auto 0; height:12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .hero__badge{
+    width: 76px; height: 76px; margin: 0 auto 12px;
+    display:grid; place-items:center; border-radius: 50%;
+    background: radial-gradient(ellipse at 30% 30%, rgba(233,69,96,.28), rgba(233,69,96,.1));
+    border: 2px solid rgba(255,255,255,.18);
+    box-shadow: inset 0 6px 14px rgba(255,255,255,.05), 0 8px 20px rgba(233,69,96,.25);
+    font-size: 30px;
+  }
+
+  h2{
+    margin:0;
+    span{
+      background: linear-gradient(90deg, #fff, #f2e9ff 30%, #ffd1db 60%, #ffffff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 22px rgba(255, 107, 139, .15);
+      font-weight: 900; letter-spacing: .8px; font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+    }
+  }
+  .hero__underline{
+    width: min(320px, 64%); height: 4px; margin: 12px auto 8px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 999px; filter: drop-shadow(0 0 6px rgba(233,69,96,.4));
+  }
+  p{ color: var(--muted); }
+}
+
+/* ---------- MAPA ---------- */
+.map-shell{ position: relative; }
+.map{
+  width: 100%;
+  height: min(72vh, 760px);
+  border-radius: var(--radius-xl);
+  border: 2px solid rgba(233,69,96,.25);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  background: transparent !important; /* asegura fondo transparente */
+}
+
+/* Overlay de controles */
+.map-overlay{
+  position: absolute; top: 16px; left: 16px; right: auto;
+  pointer-events: none; display: grid; gap: 10px;
+}
+.panel{
+  pointer-events: all;
+  background: var(--glass) !important; /* prioridad sobre reglas globales */
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 16px;
+  padding: 12px 14px;
+  min-width: 260px;
+  box-shadow: 0 14px 34px rgba(0,0,0,.45);
+  h4{ margin: 4px 0 6px; font-weight: 900; display:flex; gap:8px; align-items:center; }
+}
+.btns{ display:flex; gap: 8px; flex-wrap: wrap; }
+.chip{
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #e6eaf5; font-weight: 800; border-radius: 999px;
+  padding: 8px 12px; cursor: pointer;
+  transition: transform .2s, background .2s, border-color .2s;
+  &:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); }
+  &.is-active{ background: linear-gradient(45deg, var(--accent), #c73659); border-color: transparent; }
+}
+.btn{
+  background: linear-gradient(45deg, var(--accent), #c73659);
+  color:#fff; border:0; border-radius: 999px; padding: 8px 12px; font-weight: 900; cursor: pointer;
+  box-shadow: 0 10px 22px rgba(233,69,96,.35);
+  display:inline-flex; align-items:center; gap:6px;
+  &:hover{ filter: brightness(1.06); transform: translateY(-1px); }
+}
+.divider{ height: 1px; margin: 10px 0; background: rgba(255,255,255,.12); }
+.hint{ margin-top: 8px; color: #cfd8ef; font-size: .9rem; }
+
+/* Leaflet custom look */
+.leaflet-container { font-family: inherit !important; background: transparent !important; }
+.custom-marker{
+  width: 36px; height: 36px; display:grid; place-items:center;
+  background: radial-gradient(circle at 50% 45%, #ff6b8b 0%, #e94560 60%, #c73659 100%);
+  color: #fff; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.9);
+  box-shadow: 0 10px 22px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.3);
+  font-size: 16px;
+}
+.custom-popup .leaflet-popup-content-wrapper{
+  background: linear-gradient(135deg, #1e293b, #0b1722);
+  color: #fff; border-radius: 16px; border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 16px 36px rgba(0,0,0,.55);
+}
+.custom-popup .leaflet-popup-tip{ background: #0b1722; }
+.map-popup h3{
+  color: #ffccda; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.15); padding-bottom: 6px;
+}
+.map-popup p{ margin: 6px 0; }
+.map-popup strong{ color: #a3e4d7; }
+
+/* Responsive */
+@media (max-width: 780px){
+  .map{ height: 62vh; }
+  .panel{ min-width: 220px; }
+}

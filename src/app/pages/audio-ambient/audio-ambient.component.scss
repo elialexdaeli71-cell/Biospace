@@ -1,0 +1,86 @@
+:host { all: initial; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+.ghost{
+  position: fixed;
+  width: 1px; height: 1px;
+  left: -9999px; top: -9999px;
+  opacity: 0; pointer-events: none;
+}
+
+/* Contenedor flotante – ARRIBA IZQUIERDA */
+.audio-ambient{
+  position: fixed;
+  left: 14px;
+  top: 76px;          /* muévelo si tu header es más alto/bajo */
+  z-index: 1300;
+  user-select: none;
+}
+
+/* Pastilla de control */
+.pill{
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 10px; align-items: center;
+  padding: 10px 12px; border-radius: 18px;
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(122,162,255,.12), transparent 42%),
+    radial-gradient(120% 100% at 0% 100%, rgba(255,147,176,.12), transparent 42%),
+    linear-gradient(180deg, #0e1a33, #0f2342);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #e7f0ff;
+  box-shadow: 0 24px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(8px);
+}
+
+/* Astronauta */
+.astro{
+  position: relative;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center; border: 0; cursor: pointer;
+  background: radial-gradient(circle at 30% 30%, #fff6, transparent 60%), linear-gradient(180deg,#60a5fa,#22d3ee);
+  box-shadow: 0 18px 38px rgba(0,0,0,.35), inset 0 2px 4px #fff5;
+  transition: transform .15s ease, filter .2s ease;
+}
+.astro:hover{ transform: translateY(-2px); }
+.astro .emoji{ font-size: 28px; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+
+/* Manos sobre oídos cuando está pausado */
+.astro .hands{
+  position: absolute;
+  display: block;
+  font-size: 14px;
+  transform: translateY(-12px);
+  opacity: .95;
+}
+
+/* Estado / ondas */
+.status { line-height: 1.1; }
+.status b { display: block; font-size: 13px; }
+.status small { opacity: .85; font-size: 11px; }
+.waves{ display: inline-flex; gap: 3px; margin-top: 4px; }
+.waves span{
+  width: 6px; height: 10px; border-radius: 2px; background: #a7f3d0;
+  animation: w 1s ease-in-out infinite;
+}
+.waves span:nth-child(2){ animation-delay: .15s; }
+.waves span:nth-child(3){ animation-delay: .3s; }
+@keyframes w{ 0%,100%{ transform: scaleY(.6); opacity: .6; } 50%{ transform: scaleY(1.4); opacity: 1; } }
+
+/* Botón mute */
+.mute{
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer; border: 0;
+  background: linear-gradient(180deg,#1b2a4a,#13233f);
+  color: #fff; font-size: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 20px rgba(0,0,0,.35);
+}
+
+/* Hint */
+.hint{
+  margin-top: 8px; font-size: 12px; color: #e6edf8;
+  background: rgba(0,0,0,.45); padding: 6px 8px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(4px);
+}
+
+/* Estados */
+.audio-ambient.is-muted .status b{ color: #ffd1db; }
+.audio-ambient:not(.is-muted) .status b{ color: #a7f3d0; }

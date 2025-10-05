@@ -1,0 +1,27 @@
+﻿import { Injectable } from '@angular/core';
+
+export interface SearchHit {
+  title: string;
+  link: string;
+  snippet: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class SpaceSearchService {
+  private KEY = ''; // tu clave de Google CSE (opcional para pruebas)
+  private CX  = ''; // tu cx de Google CSE (opcional para pruebas)
+
+  async searchWeb(q: string): Promise<SearchHit[]> {
+    if (!this.KEY || !this.CX) return []; // sin claves no rompas la UI
+    const url = \https://www.googleapis.com/customsearch/v1?key=\&cx=\&q=\\;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(\HTTP \\);
+    const json: any = await res.json();
+    const items: any[] = json?.items ?? [];
+    return items.slice(0, 5).map(it => ({
+      title: String(it.title ?? ''),
+      link : String(it.link ?? ''),
+      snippet: String(it.snippet ?? '')
+    }));
+  }
+}

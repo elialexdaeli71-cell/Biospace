@@ -1,0 +1,31 @@
+<!-- Reproductor oculto (solo audio) -->
+<div id="yt-audio-ghost" class="ghost" aria-hidden="true"></div>
+
+<!-- Control flotante -->
+<div class="audio-ambient" [class.is-playing]="playing" [class.is-muted]="muted">
+  <div class="pill" role="group" aria-label="Audio ambiental">
+    <!-- Botón principal: astronauta. Pausa/Reanuda -->
+    <button class="astro" (click)="togglePlay()" [attr.aria-pressed]="playing" title="Reproducir / Pausar">
+      <span class="emoji">👨‍🚀</span>
+      <span class="hands" *ngIf="!playing" aria-hidden="true">👐</span>
+    </button>
+
+    <div class="status">
+      <b>{{ playing ? (muted ? 'Reproduciendo (silencio)' : 'Reproduciendo') : 'Pausado' }}</b>
+      <small>Audio ambiental</small>
+      <div class="waves" *ngIf="playing">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Botón de mute -->
+    <button class="mute" (click)="toggleMute()" [attr.aria-pressed]="!muted" [title]="muted ? 'Activar sonido' : 'Silenciar'">
+      {{ muted ? '🔇' : '🔊' }}
+    </button>
+  </div>
+
+  <!-- Hint para políticas de autoplay -->
+  <div class="hint" *ngIf="showHint">
+    Toca el astronauta o cualquier parte para activar el sonido.
+  </div>
+</div>

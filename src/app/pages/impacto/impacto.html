@@ -1,0 +1,337 @@
+<section class="impacto">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero__badge">
+      <i class="fa-solid fa-earth-americas"></i>
+    </div>
+    <h1 class="hero__title">Tu Impacto en el Planeta</h1>
+    <div class="hero__underline"></div>
+    <p class="hero__subtitle">Calcula tu huella anual y descubre acciones de alto impacto</p>
+  </header>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+    <!-- GAUGE SECTION -->
+    <div class="gauge-section card">
+      <div class="gauge-container">
+        <div class="gauge">
+          <div class="gauge__ring" [style.--value]="pctOfTarget() + '%'">
+            <div class="gauge__dot"></div>
+          </div>
+          <div class="gauge__read">
+            <div class="gauge__total">{{ totalTons() | number:'1.2-2' }}</div>
+            <div class="gauge__unit">tCO₂e / año</div>
+            <div class="gauge__target">
+              Meta personal: <b>{{ targetTons }} t</b>
+            </div>
+          </div>
+        </div>
+        
+        <!-- BREAKDOWN BARS -->
+        <div class="breakdown">
+          <h3 class="breakdown__title">Desglose por categoría</h3>
+          <div class="bars">
+            <div class="bar" *ngFor="let b of breakdown()">
+              <div class="bar__info">
+                <span class="bar__name">{{ b.name }}</span>
+                <span class="bar__value">{{ b.value | number:'1.2-2' }} t</span>
+              </div>
+              <div class="bar__track">
+                <div class="bar__fill"
+                     [style.width.%]="widthPct(b.value)"
+                     [style.background]="b.color"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS SECTION -->
+    <div class="controls-section">
+      <!-- TRANSPORTE -->
+      <div class="control-card card">
+        <div class="card__header">
+          <div class="card__icon">
+            <i class="fa-solid fa-car-side"></i>
+          </div>
+          <h3 class="card__title">Transporte</h3>
+        </div>
+        
+        <div class="control-group">
+          <label class="control-label">
+            <span>Tipo de auto</span>
+            <select class="control-select" [(ngModel)]="state().carType" (ngModelChange)="set('carType', $event)">
+              <option value="ice">Combustión</option>
+              <option value="hibrido">Híbrido</option>
+              <option value="ev">Eléctrico</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Kilómetros/semana (auto)</span>
+            <span class="control-value">{{ state().carKmWeek }} km</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="600" step="5"
+                 [(ngModel)]="state().carKmWeek" (ngModelChange)="set('carKmWeek', +$event)">
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Kilómetros/semana (público)</span>
+            <span class="control-value">{{ state().transitKmWeek }} km</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="400" step="5"
+                 [(ngModel)]="state().transitKmWeek" (ngModelChange)="set('transitKmWeek', +$event)">
+        </div>
+
+        <div class="control-columns">
+          <div class="control-group">
+            <label class="control-label">
+              <span>Vuelos cortos/año</span>
+              <input type="number" class="control-input" min="0" step="1"
+                     [(ngModel)]="state().flightsShortYr" (ngModelChange)="set('flightsShortYr', +$event)">
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="control-label">
+              <span>Vuelos largos/año</span>
+              <input type="number" class="control-input" min="0" step="1"
+                     [(ngModel)]="state().flightsLongYr" (ngModelChange)="set('flightsLongYr', +$event)">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENERGÍA -->
+      <div class="control-card card">
+        <div class="card__header">
+          <div class="card__icon">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3 class="card__title">Energía del hogar</h3>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Electricidad (kWh/mes)</span>
+            <span class="control-value">{{ state().elecKwhMonth }} kWh</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="900" step="10"
+                 [(ngModel)]="state().elecKwhMonth" (ngModelChange)="set('elecKwhMonth', +$event)">
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Gas (kWh/mes)</span>
+            <span class="control-value">{{ state().gasKwhMonth }} kWh</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="1500" step="10"
+                 [(ngModel)]="state().gasKwhMonth" (ngModelChange)="set('gasKwhMonth', +$event)">
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Solar propio</span>
+            <span class="control-value">{{ state().solarPct }}%</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="100" step="1"
+                 [(ngModel)]="state().solarPct" (ngModelChange)="set('solarPct', +$event)">
+        </div>
+      </div>
+
+      <!-- ALIMENTACIÓN -->
+      <div class="control-card card">
+        <div class="card__header">
+          <div class="card__icon">
+            <i class="fa-solid fa-bowl-food"></i>
+          </div>
+          <h3 class="card__title">Alimentación</h3>
+        </div>
+
+        <div class="diet-options">
+          <label class="diet-option" [class.active]="state().diet==='alta'">
+            <input type="radio" name="diet" value="alta"
+                   [checked]="state().diet==='alta'" (change)="set('diet','alta')">
+            <span>Alta en carne</span>
+          </label>
+          <label class="diet-option" [class.active]="state().diet==='mixta'">
+            <input type="radio" name="diet" value="mixta"
+                   [checked]="state().diet==='mixta'" (change)="set('diet','mixta')">
+            <span>Mixta</span>
+          </label>
+          <label class="diet-option" [class.active]="state().diet==='baja'">
+            <input type="radio" name="diet" value="baja"
+                   [checked]="state().diet==='baja'" (change)="set('diet','baja')">
+            <span>Baja en carne</span>
+          </label>
+          <label class="diet-option" [class.active]="state().diet==='veg'">
+            <input type="radio" name="diet" value="veg"
+                   [checked]="state().diet==='veg'" (change)="set('diet','veg')">
+            <span>Vegetariana</span>
+          </label>
+          <label class="diet-option" [class.active]="state().diet==='vegan'">
+            <input type="radio" name="diet" value="vegan"
+                   [checked]="state().diet==='vegan'" (change)="set('diet','vegan')">
+            <span>Vegana</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- CONSUMO -->
+      <div class="control-card card">
+        <div class="card__header">
+          <div class="card__icon">
+            <i class="fa-solid fa-recycle"></i>
+          </div>
+          <h3 class="card__title">Residuos & consumo</h3>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <span>Residuos (kg/semana)</span>
+            <span class="control-value">{{ state().wasteKgWeek }} kg</span>
+          </label>
+          <input type="range" class="control-slider" min="0" max="25" step="0.5"
+                 [(ngModel)]="state().wasteKgWeek" (ngModelChange)="set('wasteKgWeek', +$event)">
+        </div>
+
+        <div class="control-group switch-group">
+          <label class="control-label">
+            <span>¿Reciclas?</span>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="state().recycle" (ngModelChange)="set('recycle', $event)">
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <div class="control-columns">
+          <div class="control-group">
+            <label class="control-label">
+              <span>Prendas nuevas/año</span>
+              <input type="number" class="control-input" min="0" step="1"
+                     [(ngModel)]="state().clothesYr" (ngModelChange)="set('clothesYr', +$event)">
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="control-label">
+              <span>Electrónicos/año</span>
+              <input type="number" class="control-input" min="0" step="0.1"
+                     [(ngModel)]="state().electronicsYr" (ngModelChange)="set('electronicsYr', +$event)">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMA ESPACIAL -->
+  <section class="weather-impact card">
+    <div class="weather-header">
+      <div class="weather-icon">
+        <i class="fa-solid fa-sun"></i>
+      </div>
+      <div class="weather-info">
+        <h3 class="weather-title">Clima Espacial: Impactos y Consecuencias</h3>
+        <p class="weather-description">Eventos solares afectan la tecnología moderna y algunos ecosistemas</p>
+      </div>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-card risk-low">
+        <div class="impact-header">
+          <div class="impact-icon risk-icon-low">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <h4 class="impact-title">Humanos</h4>
+        </div>
+        <ul class="impact-list">
+          <li><b>Superficie:</b> Impacto directo <b>leve</b></li>
+          <li><b>Aviación:</b> Rutas polares con más radiación</li>
+          <li><b>Astronautas:</b> <b>Alto</b> riesgo de radiación</li>
+        </ul>
+      </div>
+
+      <div class="impact-card risk-medium">
+        <div class="impact-header">
+          <div class="impact-icon risk-icon-medium">
+            <i class="fa-solid fa-dove"></i>
+          </div>
+          <h4 class="impact-title">Animales</h4>
+        </div>
+        <ul class="impact-list">
+          <li><b>Navegadores magnéticos:</b> Se desorientan</li>
+          <li><b>Fauna general:</b> Impacto directo <b>bajo</b></li>
+        </ul>
+      </div>
+
+      <div class="impact-card risk-low">
+        <div class="impact-header">
+          <div class="impact-icon risk-icon-low">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <h4 class="impact-title">Plantas</h4>
+        </div>
+        <ul class="impact-list">
+          <li><b>Directo:</b> <b>Leve</b> a nivel de suelo</li>
+          <li><b>Indirecto:</b> Riesgos por fallas en sistemas</li>
+        </ul>
+      </div>
+
+      <div class="impact-card risk-high">
+        <div class="impact-header">
+          <div class="impact-icon risk-icon-high">
+            <i class="fa-solid fa-satellite"></i>
+          </div>
+          <h4 class="impact-title">Tecnología</h4>
+        </div>
+        <ul class="impact-list">
+          <li><b>Satélites:</b> Fallos electrónicos y degradación</li>
+          <li><b>GPS/GNSS:</b> Pérdida de precisión</li>
+          <li><b>Red eléctrica:</b> Apagones por daños</li>
+          <li><b>Comunicaciones:</b> Interrupciones de radio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="weather-note">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Consejo: Prepara planes alternativos para GPS, energía y comunicaciones durante tormentas solares</span>
+    </div>
+  </section>
+
+  <!-- CONSEJOS -->
+  <section class="tips-section card">
+    <div class="tips-header">
+      <div class="tips-icon">
+        <i class="fa-solid fa-lightbulb"></i>
+      </div>
+      <h3 class="tips-title">Sugerencias para reducir tu huella</h3>
+    </div>
+    
+    <div class="tips-grid">
+      <div class="tip-card" *ngFor="let t of tips()">
+        <div class="tip-icon">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="tip-text">{{ t }}</div>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <a class="btn btn-primary" routerLink="/juego">
+        <i class="fa-solid fa-gamepad"></i> Pruébalo en el juego
+      </a>
+      <a class="btn btn-secondary" routerLink="/mapa">
+        <i class="fa-solid fa-globe"></i> Ver mapa
+      </a>
+    </div>
+    
+    <div class="disclaimer">
+      <small>Estimación orientativa basada en factores promedio. Tu situación real puede variar.</small>
+    </div>
+  </section>
+</section>

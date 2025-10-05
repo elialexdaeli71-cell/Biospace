@@ -1,0 +1,30 @@
+﻿<button class='fab' (click)='toggle()' aria-label='Abrir IA solar'></button>
+
+<section class='panel' [class.open]='isOpen' aria-live='polite'>
+  <header class='head'>
+    <div class='left'>
+      <span class='logo'>☀️</span>
+      <strong>IA Solar</strong>
+      <small>Ayuda sobre clima espacial</small>
+    </div>
+    <button class='close' (click)='toggle()' aria-label='Cerrar'></button>
+  </header>
+
+  <div class='list'>
+    <div class='msg' *ngFor='let m of messages' [class.user]='m.from === "user"'>
+      <div class='avatar'>{{ m.from === "user" ? "🧑‍🚀" : "" }}</div>
+      <div class='bubble'>
+        <span [innerHTML]='safe(m.text)'></span>
+        <div class='links' *ngIf='m.hits?.length'>
+          <a *ngFor='let h of m.hits' [href]='h.link' target='_blank' rel='noreferrer'>{{ h.title }}</a>
+        </div>
+      </div>
+    </div>
+    <div class='typing' *ngIf='typing'><i></i><i></i><i></i></div>
+  </div>
+
+  <footer class='input'>
+    <input type='text' [(ngModel)]='input' placeholder='Pregunta sobre clima espacial' (keyup.enter)='ask()' />
+    <button class='send' (click)='ask()'>Enviar</button>
+  </footer>
+</section>

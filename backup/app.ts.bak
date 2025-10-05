@@ -1,0 +1,32 @@
+﻿// src/app/app.ts
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, RouterOutlet } from '@angular/router';
+
+import { HeaderComponent } from './layout/header/header.component';
+import { MenuComponent }   from './pages/menu/menu.component';
+import { FooterComponent } from './layout/footer/footer';
+
+// ðŸ‘‡ IMPORTA EL BOT
+import { SpaceBotComponent } from './pages/ia/space-bot/space-bot';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  templateUrl: './app.html',
+  styleUrls: ['./app.scss'],
+  imports: [
+    SpaceBotComponent, 
+    CommonModule,
+    RouterModule,
+    RouterOutlet,
+    HeaderComponent,
+    MenuComponent,
+    FooterComponent,
+
+    // ðŸ‘‡ AGREGA EL COMPONENTE IA AQUÃ
+    SpaceBotComponent
+  ]
+})
+export class AppComponent {}
+

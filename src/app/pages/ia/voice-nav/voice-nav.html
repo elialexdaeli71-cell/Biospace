@@ -1,0 +1,55 @@
+﻿<!-- Mic flotante -->
+<button
+  class="mic"
+  [class.on]="isListening"
+  (click)="toggle()"
+  (mousedown)="onPressStart($event)" (touchstart)="onPressStart($event)"
+  (mouseup)="onPressEnd()" (mouseleave)="onPressEnd()" (touchend)="onPressEnd()"
+  aria-label="Control por voz">
+  <span class="icon">🎤</span>
+</button>
+
+<!-- Toast de lo último escuchado -->
+<div class="toast" *ngIf="lastHeard">
+  <span>{{ lastHeard }}</span>
+</div>
+
+<!-- Pista (cuando no está la intro abierta) -->
+<div class="hint" *ngIf="!introOpen">
+  Di: <b>“llévame al mapa”</b>, <b>“inicio”</b>, <b>“juego”</b>… • Hotword: <b>“por favor”</b>
+</div>
+
+<!-- Banner para reactivar mic -->
+<div class="re-enable" *ngIf="(!introOpen && (micState!=='granted')) || (!introOpen && disabledBanner)">
+  <span>Micrófono desactivado</span>
+  <button (click)="openReEnable()">Permitir micrófono</button>
+</div>
+
+<!-- ONBOARDING / INTRO -->
+<div class="overlay" *ngIf="introOpen">
+  <div class="card">
+    <div class="sun">🌞</div>
+    <h3>Bienvenido a <b>BIOSPACE</b></h3>
+    <p class="lead">Te cuento qué hay en la app y activo el control por voz.</p>
+
+    <div class="features">
+      <div class="ft" *ngFor="let f of features">
+        <div class="ft-ico">{{ f.icon }}</div>
+        <div class="ft-body">
+          <h4>{{ f.title }}</h4>
+          <p>{{ f.desc }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="play" (click)="playIntro()" [disabled]="speaking">▶ Introducción</button>
+      <button class="yes" (click)="accept()">🎙️ Empezar con mi voz</button>
+      <button class="no" (click)="decline()">Ahora no</button>
+    </div>
+
+    <small class="tip">
+      Consejo: di <b>“por favor”</b> para despertarme y luego <b>“llévame al mapa”</b>, <b>“ir al juego”</b>, <b>“abrir IA”</b>…
+    </small>
+  </div>
+</div>

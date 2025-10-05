@@ -1,1 +1,170 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== GLOBAL BIOSPACE: fuerza el fondo Cloudinary en todo menos Home ===== */
+
+/* ---------- Tema base ---------- */
+:root{
+  --page-bg: #0b1423;
+  --text: #e7f0ff;
+  --muted: #a7b8d6;
+  --accent: #e94560;
+  --accent-2: #ff6b8b;
+
+  /* 👉 Imagen que quieres ver en TODAS las páginas (menos Home) */
+  --space-bg: url("https://res.cloudinary.com/ds757fmhk/image/upload/v1759585038/unnamed_fe67xe.png");
+}
+
+/* ---------- Reset mínimo ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: transparent !important;
+}
+
+/* ---------- Contenedor raíz ---------- */
+app-root{
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+main.content{ flex: 1 0 auto; background: transparent !important; }
+app-footer{ display:block; margin-top:auto; width:100%; }
+
+/* ===== Motor de fondo (colocado DETRÁS de todo) ===== */
+body::before{
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  /* por defecto sin imagen (para Home) */
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+    linear-gradient(#0b1423, #0b1423);
+}
+
+/* 👉 En cualquier ruta que NO sea Home, se aplica la imagen */
+body.bg-alt::before{
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+    linear-gradient(rgba(7,11,22,.85), rgba(7,11,22,.92)),
+    var(--space-bg) center / cover no-repeat fixed !important;
+}
+
+/* ====== FORZAR que Mapa / Impacto / Problema / Acerca / Juego usen la misma imagen ======
+   (por si sus SCSS intentan meter otra imagen en ::before) */
+body.bg-alt .mapa-page::before,
+body.bg-alt .impacto::before,
+body.bg-alt .problema-page::before,
+body.bg-alt .acerca-page::before,
+body.bg-alt .juego-page::before{
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+    linear-gradient(rgba(7,11,22,.80), rgba(7,11,22,.88)),
+    var(--space-bg) center / cover no-repeat fixed !important;
+}
+
+/* ===== Hacer TRANSPARENTE lo que suele tapar el fondo ===== */
+
+/* Leaflet (mapa) */
+.leaflet-container,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom{
+  background: transparent !important;
+}
+
+/* Tarjetas/sections comunes: que sean tipo glass y no tapen el fondo */
+.section, .card{
+  background: rgba(18,29,48,.55);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* Hero genérico de secciones (si usas .hero en tus páginas) */
+.hero{
+  background: rgba(26, 32, 58, .65) !important;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 24px;
+  backdrop-filter: blur(6px);
+}
+
+/* Juego: vuelve transparente el lienzo/fondo superior para que se vea la imagen */
+.juego-page,
+.juego-page *:where(.sky, .stage, .scene, .game-wrap){
+  background: transparent !important;
+}
+
+/* ---------- Enlaces ---------- */
+a{ color: #a7f3d0; text-decoration: none; }
+a:hover{ color: var(--accent); text-decoration: underline; }
+
+/* ---------- Accesibilidad / motion ---------- */
+:focus-visible{ outline: 3px solid #fff; outline-offset: 3px; border-radius: 12px; }
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}
+
+/* ====== Posición global del FAB / menú flotante ====== */
+app-menu{
+  position: fixed;
+  right: calc(22px + env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);        /* centrado vertical */
+  z-index: 1400;
+  pointer-events: none;                /* el host no roba clics */
+}
+app-menu *{ pointer-events: auto; }
+
+/* En móvil lo bajamos a la esquina inferior derecha */
+@media (max-width: 768px){
+  app-menu{
+    top: auto;
+    bottom: calc(22px + env(safe-area-inset-bottom));
+    transform: none;
+  }
+}
+
+/* ====== Posición global del FAB / menú flotante ====== */
+app-menu{
+  position: fixed;
+  right: calc(22px + env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);        /* centrado vertical */
+  z-index: 1400;
+  pointer-events: none;                /* el host no roba clics */
+}
+app-menu *{ pointer-events: auto; }
+
+/* En móvil lo bajamos a la esquina inferior derecha */
+@media (max-width: 768px){
+  app-menu{
+    top: auto;
+    bottom: calc(22px + env(safe-area-inset-bottom));
+    transform: none;
+  }
+}
+
+/* ====== Forzar visibilidad/posición del chat IA ====== */
+app-space-bot{
+  position: fixed !important;
+  right: 22px;         /* pega al borde derecho */
+  bottom: 150px;       /* por encima del micrófono */
+  z-index: 1700 !important;
+  display: block !important;
+  pointer-events: none;            /* el host no roba clicks */
+}
+app-space-bot *{ pointer-events: auto; }
+
+/* Evitar choques en móvil: súbelo un poco más */
+@media (max-width: 768px){
+  app-space-bot{
+    right: 16px;
+    bottom: 170px;
+  }
+}

@@ -1,0 +1,131 @@
+﻿:host{ display:block; }
+
+/* Contenedor local */
+.fab-menu{
+  position: relative;
+  width: 68px;               /* ancho mínimo por el botón */
+  isolation: isolate;        /* para sombras/blur */
+}
+
+/* Botón flotante */
+.fab{
+  width: 68px; height: 68px; border-radius: 50%;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(circle at 30% 25%, #ffffff 0 12%, rgba(255,255,255,.1) 13% 60%, transparent 61%),
+    linear-gradient(180deg, #2dd4bf, #0ea5e9);
+  color:#0b1423;
+  border: 2px solid rgba(255,255,255,.6);
+  box-shadow:
+    0 16px 38px rgba(14,165,233,.35),
+    inset 0 2px 0 rgba(255,255,255,.6);
+  cursor: pointer;
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+.fab:hover{ transform: translateY(-2px) scale(1.02); filter: brightness(1.06); }
+.fab:active{ transform: scale(.98); }
+.fab:focus-visible{
+  outline: 3px solid #7dd3fc;
+  outline-offset: 3px;
+}
+.seed{ font-size: 30px; line-height: 1; }
+
+/* Panel / popover */
+.list{
+  position: absolute;
+  right: 82px;             /* a la izquierda del botón */
+  top: 50%;
+  transform: translateY(-50%) translateX(6px) scale(.98);
+  transform-origin: right center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+
+  min-width: 280px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+
+  background: rgba(16, 24, 42, .72);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 26px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Flecha del popover */
+.list::after{
+  content:"";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 10px solid transparent;
+  border-left-color: rgba(16, 24, 42, .72);
+  filter: drop-shadow(-1px 0 0 rgba(255,255,255,.14));
+}
+
+/* Mostrar cuando .open */
+.fab-menu.open .list{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Opción */
+.item{
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+  color: #e7f0ff;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+  cursor: pointer;
+
+  transition: background .15s ease, transform .15s ease, border-color .15s ease;
+}
+.item:hover{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.2);
+  transform: translateX(-1px);
+}
+.item:focus-visible{
+  outline: 3px solid #7aa2ff;
+  outline-offset: 2px;
+}
+
+.ico{
+  width: 44px; height: 44px;
+  display:grid; place-items:center;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #20304f, #1a2844);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+  font-size: 22px;
+}
+.lbl b{ font-weight: 900; letter-spacing: .2px; }
+.lbl small{ display:block; opacity:.75; }
+
+/* En móvil, el popover sale hacia arriba del botón */
+@media (max-width: 768px){
+  .list{
+    right: 50%;
+    top: auto; bottom: 82px;
+    transform: translateX(50%) translateY(6px) scale(.98);
+  }
+  .fab-menu.open .list{
+    transform: translateX(50%) translateY(0) scale(1);
+  }
+  .list::after{
+    right: 50%;
+    top: auto; bottom: -10px; transform: translateX(50%);
+    border: 10px solid transparent;
+    border-top-color: rgba(16, 24, 42, .72);
+  }
+}

@@ -1,5 +1,6 @@
-<!-- src/app/app.html -->
 <app-header></app-header>
+
+<div class="particles" id="particles"></div>
 
 <main class="content">
   <router-outlet></router-outlet>
@@ -8,12 +9,11 @@
 <!-- Menú flotante global -->
 <app-menu></app-menu>
 
-<!-- Footer -->
+<!-- Footer como componente -->
 <app-footer></app-footer>
 
-<!-- ✅ Audio ambiental global (solo audio, video oculto) -->
-<app-audio-ambient></app-audio-ambient>
+<!-- 👇 Chat IA flotante (izquierda). No crea rutas nuevas. -->
 
-<!-- IA y Voz (flotantes) -->
+<!-- Chat IA global -->
 <app-space-bot></app-space-bot>
-<app-voice-nav></app-voice-nav>
+

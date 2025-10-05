@@ -1,0 +1,87 @@
+/* ========== HEADER · Neon Aurora ========== */
+
+:root{
+  --hdr-base: #0b1220;    /* fondo base oscuro */
+  --hdr-glow1:#22d3ee;    /* cian */
+  --hdr-glow2:#6366f1;    /* índigo */
+  --hdr-line:#7dd3fc;     /* cian claro */
+  --hdr-text:#eaf2ff;     /* texto */
+  --hdr-muted:#b8c7e6;
+}
+
+.app-header{
+  position: sticky; top: 0; z-index: 1000;
+  /* vidrio + aurora */
+  background:
+    radial-gradient(120% 140% at 10% -20%, rgba(34,211,238,.28), transparent 40%),
+    radial-gradient(120% 140% at 90% 0%,  rgba(99,102,241,.22), transparent 45%),
+    linear-gradient(90deg, #0a1323 0%, #0f1d2f 60%, #0a1323 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in oklab, var(--hdr-glow2) 55%, transparent);
+  box-shadow:
+    0 10px 32px rgba(0,0,0,.35),
+    inset 0 -1px 0 rgba(255,255,255,.06);
+}
+
+/* halo suave cuando haces scroll (opcional, quita si no lo usas) */
+.app-header.is-scrolled{
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.45),
+    0 0 0 1px rgba(125,211,252,.14) inset;
+}
+
+.header-inner{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 20px;
+  justify-content: space-between;
+  color: var(--hdr-text);
+}
+
+/* Marca */
+.brand{ display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--hdr-text); }
+.brand .logo{ font-size: 28px; filter: drop-shadow(0 6px 18px rgba(34,211,238,.25)); }
+.brand .title{
+  font-weight: 800; letter-spacing: .3px; font-size: 22px;
+  /* texto con gradiente sutil */
+  background: linear-gradient(90deg, #eaf2ff 0%, #c7d2fe 45%, #a5f3fc 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Navegación */
+.nav{ display: flex; gap: 10px; }
+.nav a{
+  color: var(--hdr-muted);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  transition: color .2s ease, box-shadow .2s ease, transform .15s ease, background .2s ease;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,.02);
+}
+.nav a:hover{
+  color: var(--hdr-text);
+  background: linear-gradient(180deg, rgba(34,211,238,.15), rgba(99,102,241,.10));
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--hdr-glow1) 60%, transparent) inset,
+    0 6px 18px rgba(34,211,238,.18);
+  transform: translateY(-1px);
+}
+.nav a.active{
+  color: white;
+  background: linear-gradient(180deg, rgba(34,211,238,.22), rgba(99,102,241,.18));
+  border-color: color-mix(in oklab, var(--hdr-glow2) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--hdr-glow2) 55%, transparent) inset,
+    0 10px 24px rgba(99,102,241,.22);
+}
+
+/* Responsivo */
+@media (max-width: 880px){
+  .header-inner{ gap: 12px; padding: 12px 14px; }
+  .brand .title{ font-size: 18px; }
+  .nav a{ padding: 8px 10px; font-weight: 700; }
+}
