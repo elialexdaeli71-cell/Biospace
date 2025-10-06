@@ -1,47 +1,35 @@
-<section class="storybook" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
-  <!-- Libro con perspectiva -->
-  <div class="book" aria-label="Libro">
-    <!-- Lomo -->
-    <div class="spine" aria-hidden="true"></div>
-
-    <!-- Pila de hojas -->
-    <div class="stack">
-      <article
-        class="sheet"
-        *ngFor="let s of sheets; let i = index"
-        [class.flipped]="i < flipped"
-        [style.zIndex]="total - i"
-        (click)="onSheetClick(i)"
-        aria-label="Hoja">
-        <!-- Cara frontal -->
-        <div class="side front" [style.--img]="s.frontVar"></div>
-        <!-- Cara posterior -->
-        <div class="side back"  [style.--img]="s.backVar"></div>
-
-        <!-- Bordes para grosor -->
-        <div class="edge left"  aria-hidden="true"></div>
-        <div class="edge right" aria-hidden="true"></div>
-      </article>
-    </div>
+<div class="visor" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+  <!-- CONTENEDOR DE IMAGEN ACTUAL -->
+  <div class="image-container">
+    <img 
+      [src]="currentImage" 
+      class="current-image" 
+      alt="Página {{ currentIndex + 1 }}"
+      (click)="next()">
   </div>
 
-  <!-- Controles -->
-  <div class="ui">
-    <button class="nav prev" (click)="prev()" [disabled]="!canPrev" aria-label="Página anterior">‹</button>
-    <button class="nav next" (click)="next()" [disabled]="!canNext" aria-label="Página siguiente">›</button>
-
-    <div class="progress" aria-label="Progreso de lectura">
-      <div class="bar" [style.width.%]="progressPct()"></div>
+  <!-- CONTROLES -->
+  <div class="controls">
+    <button class="nav-btn prev" (click)="prev()" [disabled]="!canPrev">
+      ‹
+    </button>
+    
+    <div class="counter">
+      {{ currentIndex + 1 }} / {{ totalImages }}
     </div>
-
-    <nav class="dots" aria-label="Páginas">
-      <button
-        class="dot"
-        *ngFor="let _ of sheets; let i = index"
-        [class.is-active]="i === flipped"
-        (click)="goTo(i)">
-      </button>
-      <button class="dot" [class.is-active]="flipped === total" (click)="goTo(total)"></button>
-    </nav>
+    
+    <button class="nav-btn next" (click)="next()" [disabled]="!canNext">
+      ›
+    </button>
   </div>
-</section>
+
+  <!-- PUNTOS DE NAVEGACIÓN -->
+  <div class="dots">
+    <button 
+      *ngFor="let dot of dots; let i = index"
+      class="dot" 
+      [class.active]="i === currentIndex"
+      (click)="goToImage(i)">
+    </button>
+  </div>
+</div>

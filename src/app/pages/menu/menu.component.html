@@ -1,34 +1,41 @@
 ﻿<div class="fab-menu" [class.open]="open">
-  <!-- Botón principal -->
-  <button
-    class="fab"
-    (click)="toggle()"
-    aria-label="Menú Biospace"
-    [attr.aria-expanded]="open"
-    [attr.aria-controls]="'menu-popover'">
-    <span class="seed">🌱</span>
+  <!-- Partículas solares -->
+  <div class="solar-particles">
+    <div *ngFor="let particle of particles" 
+         class="particle"
+         [style.--tx]="particle.tx + 'px'"
+         [style.--ty]="particle.ty + 'px'"
+         [style.left]="particle.x + 'px'"
+         [style.top]="particle.y + 'px'">
+    </div>
+  </div>
+  
+  <!-- Órbita planetaria (media órbita) -->
+  <div class="orbit">
+    <!-- Planetas orbitando en media órbita -->
+    <div *ngFor="let item of items; let i = index" 
+         class="planet"
+         (click)="go(item.path)"
+         (mouseenter)="onPlanetHover(i)"
+         [style.transform]="getPlanetPosition(i)"
+         [style.animation-delay]="getAnimationDelay(i)"
+         role="menuitem"
+         [attr.aria-label]="item.label">
+      <div class="planet-content">
+        {{ item.icon }}
+      </div>
+      <div class="planet-tooltip">
+        <b>{{ item.label }}</b>
+        <small *ngIf="item.hint">{{ item.hint }}</small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sol central -->
+  <button class="fab" 
+          (click)="toggle()"
+          aria-label="Menú Biospace"
+          [attr.aria-expanded]="open">
+    <div class="seed">☀️</div>
   </button>
-
-  <!-- Lista emergente -->
-  <nav
-    class="list"
-    role="menu"
-    id="menu-popover"
-    *ngIf="open"
-    (keydown)="onListKeydown($event)"
-    aria-label="Navegación rápida">
-    <button
-      class="item"
-      role="menuitem"
-      *ngFor="let it of items; let i = index"
-      [attr.data-idx]="i"
-      (click)="go(it.path)"
-      (keydown)="onItemKeydown($event, i)">
-      <span class="ico" aria-hidden="true">{{ it.icon }}</span>
-      <span class="lbl">
-        <b>{{ it.label }}</b>
-        <small *ngIf="it.hint">{{ it.hint }}</small>
-      </span>
-    </button>
-  </nav>
 </div>
